@@ -1,5 +1,9 @@
 #include "../src/window.h"
 
 int main() {
-    run();
+    Window* win = windowNew(1280, 720, "Example");
+    while (!windowCloseEvent(win)) {
+        windowRefresh(win);
+    }
+    windowDestroy(win);
 }
