@@ -1,7 +1,3 @@
-Here's your updated **C Project Naming Conventions** document with **all leading underscores removed**, replacing them with appropriate **module-based prefixes** instead, in accordance with your modular and namespaced style:
-
----
-
 # C Project Naming Conventions
 
 This document outlines the naming conventions used throughout the C project for consistent code style and clarity.

@@ -7,13 +7,10 @@ lib_args = ['-DBUILDING_MESON_LIBRARY']
 
 # Project subdirectories
 subdir('vendor/glad')
+subdir('src')
 
 # Dependencies
 glfw = dependency('glfw3', required: true)
-
-# Project files
-sources = files('src/window.c')
-include = include_directories('src')
 
 # Targets
 renderer = static_library('GenericRenderer', sources, include_directories: include, dependencies: [ glfw, glad ])
