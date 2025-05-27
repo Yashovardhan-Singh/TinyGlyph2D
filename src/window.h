@@ -4,6 +4,7 @@
 #define WINDOW_H
 
 #include <stdint.h>
+#include "vector.h"
 
 // Opaque type
 typedef struct _Window Window;
@@ -16,8 +17,7 @@ void* windowGetHandle(Window* window);
 uint32_t windowGetWidth(Window* window);
 uint32_t windowGetHeight(Window* window);
 const char* windowGetTitle(Window* window);
-uint32_t windowGetPositionX(Window* window);    // Todo: Reimplement when vectors are added
-uint32_t windowGetPositionY(Window* window);    // Todo: Reimplement when vectors are added
+Vec2 windowGetPosition(Window* window);
 
 // Setters
 void windowSetTitle(Window* window, const char* title);

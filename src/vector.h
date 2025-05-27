@@ -2,7 +2,7 @@
 #define VECTOR_H
 
 // X and Y components
-typedef struct Vector2 {
+typedef struct {
     float x, y;
 } Vec2;
 

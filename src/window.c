@@ -73,18 +73,10 @@ void windowSetPosition(Window* window, uint32_t x, uint32_t y) {
     glfwSetWindowPos(window->windowHandle, x, y);
 }
 
-// Todo: Reimplement when vectors are added
-uint32_t windowGetPositionX(Window* window) {
+Vec2 windowGetPosition(Window* window) {
     int x, y;
     glfwGetWindowPos(window->windowHandle, &x, &y);
-    return (uint32_t) x;
-}
-
-// Todo: Reimplement when vectors are added
-uint32_t windowGetPositionY(Window* window) {
-    int x, y;
-    glfwGetWindowPos(window->windowHandle, &x, &y);
-    return (uint32_t) y;
+    return (Vec2) { (float) x, (float) y };
 }
 
 uint8_t windowCloseEvent(Window* window) {
