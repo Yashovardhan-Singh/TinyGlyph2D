@@ -6,11 +6,11 @@ This document outlines the naming conventions used throughout the C project for 
 
 ## Function Naming
 
-| Scope            | Convention                              | Example                                                       |
-| ---------------- | --------------------------------------- | ------------------------------------------------------------- |
-| Public API       | `camelCase` (with module prefix)        | `entityCreate()`, `audioPlay()`                               |
-| Private (Static) | `static camelCase` (with module prefix) | `static entityDrawTilemap()`                                  |
-| Internal Helper  | `camelCase` (with `internal_` prefix)   | `internal_entityLoadTexture()`, `internal_audioUpdateState()` |
+| Scope            | Convention                              | Example                         |
+| ---------------- | --------------------------------------- |---------------------------------|
+| Public API       | `camelCase` (with module prefix)        | `entityCreate()`, `audioPlay()` |
+| Private (Static) | `static camelCase` (with module prefix) | `static entityDrawTilemap()`    |
+| Internal Helper  | `camelCase` (with `internal_` prefix)   | `internal_entityLoadTexture()`  |
 
 All function names **must** include a module prefix to avoid name collisions and to clearly indicate ownership.
 
@@ -114,4 +114,18 @@ This applies to **all public, private, and static functions**.
 
 ## Note On Module Prefixing
 
-Module prefixing should be treated as a core part of the naming convention. It improves clarity, enforces namespacing in C where none exists by default, and supports modular project design. Each function name should clearly indicate which subsystem or module it belongs to, making the codebase easier to navigate and maintain.
+Module prefixing should be treated as a core part of the naming convention. It improves clarity, enforces namespacing  
+in C where none exists by default, and supports modular project design. Each function name should clearly indicate  
+which subsystem or module it belongs to, making the codebase easier to navigate and maintain.
+
+Also, look in src/defines.h for marker defines. Label functions so that it is clear to everyone the purpose of it.  
+
+Obey the 80 Column rule as well.  
+
+| Macro      | Usage Context                                                                 | Visibility       |
+| ---------- | ----------------------------------------------------------------------------- |------------------|
+| `API`      | Public functions **meant to be exported**                                     | Exported         |
+| `PUBLIC`   | Structs, typedefs, or macros in headers                                       | Visible          |
+| `PRIVATE`  | File-local functions or variables                                             | `static`         |
+| `INTERNAL` | Shared internal helpers (non-API), declared in a `.c` file or internal header | `static`         |
+| `HELPER`   | Small `static inline` helpers in headers                                      | Inline & private |
