@@ -90,9 +90,9 @@
 // ─────────────────────────────────────────────
 
 #if defined(EXPORT_ENABLED) && defined(BUILD_SHARED)
-    #define API API_EXPORT
+    #define TGAPI API_EXPORT
 #else
-    #define API
+    #define TGAPI
 #endif
 
 #endif // DEFINES_H
