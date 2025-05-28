@@ -3,30 +3,46 @@ project('GenericRenderer', 'c',
         default_options : ['warning_level=3', 'c_std=c18']
 )
 
-# Project subdirectories
+# ─────────────────────────────────────────────
+# Dependencies
+# ─────────────────────────────────────────────
+glfw = dependency('glfw3', required: true)
+
+# ─────────────────────────────────────────────
+# Subdirectories
+# ─────────────────────────────────────────────
 subdir('vendor/glad')
 subdir('src')
 
-# Dependencies
-glfw = dependency('glfw3', required: true)
+# ─────────────────────────────────────────────
+# Include Path
+# ─────────────────────────────────────────────
+include = include_directories('src')
 
-# Compiler flags
-lib_args = ['-DBUILDING_MESON_LIBRARY', '-DEXPORT_ENABLED']
+# ─────────────────────────────────────────────
+# Preprocessor Defines
+# ─────────────────────────────────────────────
+lib_defines = ['-DBUILDING_MESON_LIBRARY', '-DEXPORT_ENABLED']
+
 if get_option('default_library') == 'shared'
-        lib_args += ['-DBUILD_SHARED']
+        lib_defines += ['-DBUILD_SHARED']
 endif
 
-# Library
+# ─────────────────────────────────────────────
+# Build Library
+# ─────────────────────────────────────────────
 renderer = library(
         'GenericRenderer',
         sources,
         include_directories: include,
-        dependencies: [ glfw, glad ],
-        c_args: lib_args,
+        dependencies: [glfw, glad],
+        c_args: lib_defines,
         install: true
 )
 
-# Examples
+# ─────────────────────────────────────────────
+# Build Examples
+# ─────────────────────────────────────────────
 example = executable(
         'example',
         'example/example.c',
@@ -37,5 +53,6 @@ example = executable(
 tutorial = executable(
         'tutorial',
         'example/tutorial.c',
-        dependencies: [ glfw, glad ],
+        dependencies: [glfw, glad],
+        include_directories: include
 )
