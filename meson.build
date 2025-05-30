@@ -4,9 +4,15 @@ project('GenericRenderer', 'c',
 )
 
 # ─────────────────────────────────────────────
+# Compiler
+# ─────────────────────────────────────────────
+cc = meson.get_compiler('c')
+
+# ─────────────────────────────────────────────
 # Dependencies
 # ─────────────────────────────────────────────
 glfw = dependency('glfw3', required: true)
+mathlib = cc.find_library('m', required: true)
 
 # ─────────────────────────────────────────────
 # Subdirectories
@@ -35,10 +41,16 @@ renderer = library(
         'GenericRenderer',
         sources,
         include_directories: include,
-        dependencies: [glfw, glad],
+        dependencies: [glfw, glad, mathlib],
         c_args: lib_defines,
         install: true
 )
+
+
+# ─────────────────────────────────────────────
+# Tests
+# ─────────────────────────────────────────────
+subdir('test')
 
 # ─────────────────────────────────────────────
 # Build Examples
