@@ -1,7 +1,6 @@
 #include "vector.h"
 #include <math.h>
 
-
 TGAPI Vec2 vec2GetZero() {
     return (Vec2) { 0.0f, 0.0f };
 }
@@ -52,8 +51,6 @@ TGAPI float vec2DistanceFromPoint(Vec2 v1, Vec2 v2) {
     return vec2Length(pointer_vector);
 }
 
-// Ternary operations should be efficient at -O3 or -O3
-// RELEVANT: https://stackoverflow.com/questions/427477/fastest-way-to-clamp-a-real-fixed-floating-point-value
 TGAPI Vec2 vec2Clamp(Vec2 v1, float min, float max) {
     return (Vec2) {
         v1.x > min ? v1.x < max ? v1.x : max : min,

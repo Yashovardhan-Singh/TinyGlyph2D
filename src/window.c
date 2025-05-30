@@ -29,16 +29,16 @@ PRIVATE void internal_windowResizeCallback(GLFWwindow* window, int width, int he
 Window* windowNew(uint32_t width, uint32_t height, const char* title) {
     glfwInit(); // initialise GLFW
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);  // set major version of opengl
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);  // set minor version of opengl
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // set profile of opengl
+
     // Allocate memory for window and init fields
     Window* window = malloc(sizeof(Window));
     window->windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);  // return pointer to our window
     window->width = width;  // set width
     window->height = height;    // set height
     window->title = title;  // set title
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);  // set major version of opengl
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);  // set minor version of opengl
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // set profile of opengl
 
     glfwMakeContextCurrent(window->windowHandle); // attach the window to the thread on which opengl calls are issued
     glfwSetWindowUserPointer(window->windowHandle, window); // attach the window pointer to our custom window struct
@@ -78,14 +78,28 @@ void windowSetSize(Window* window, uint32_t width, uint32_t height) {
     glfwSetWindowSize(window->windowHandle, width, height);
 }
 
+void windowSetSizeVec2(Window* window, Vec2 size) {
+    glfwSetWindowSize(window->windowHandle, (int32_t) size.x, (int32_t) size.y);
+}
+
 void windowSetPosition(Window* window, uint32_t x, uint32_t y) {
     glfwSetWindowPos(window->windowHandle, x, y);
 }
 
+void windowSetPositionVec2(Window* window, Vec2 position) {
+    glfwSetWindowPos(window->windowHandle, (int32_t) position.x, (int32_t) position.y);
+}
+
 Vec2 windowGetPosition(Window* window) {
-    int x, y;
+    uint32_t x, y;
     glfwGetWindowPos(window->windowHandle, &x, &y);
     return (Vec2) { (float) x, (float) y };
+}
+
+Vec2 windowGetSize(Window* window) {
+    uint32_t fbx, fby;
+    glfwGetFramebufferSize(window->windowHandle, &fbx, &fby);
+    return (Vec2) { (float) fbx, (float) fby };
 }
 
 // Return if window should close
