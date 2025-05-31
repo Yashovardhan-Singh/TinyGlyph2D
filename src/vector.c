@@ -1,6 +1,7 @@
 #include "vector.h"
-#include <math.h>
+#include "constants.h"
 
+#include <math.h>
 
 Vec2 vec2GetZero() {
     return (Vec2) { 0.0f, 0.0f };
@@ -37,7 +38,9 @@ float vec2LengthSquared(Vec2 v1) {
 
 Vec2 vec2Normalize(Vec2 v1) {
     float len = vec2Length(v1);
-    return (Vec2) {(v1.x / len), (v1.y / len) };
+    if (!(len == 0.0f))
+        return (Vec2) {(v1.x / len), (v1.y / len) };
+    return v1;
 }
 
 Vec2 vec2Clamp(Vec2 v1, float min, float max) {
@@ -94,6 +97,8 @@ float vec2Angle(Vec2 v1) {
 
 void vec2Normalized(Vec2 *v1) {
     float len = vec2Length(*v1);
-    v1->x /= len;
-    v1->y /= len;
+    if (!(len == 0.0f)) {
+        v1->x /= len;
+        v1->y /= len;
+    }
 }
