@@ -1,80 +1,99 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-// ─────────────────────────────────────────────
-// Semantics markers
-// ─────────────────────────────────────────────
-
-#define PRIVATE     static
-#define PUBLIC
-#define INTERNAL    static
-#define EXTERNAL    extern
+/**
+ * @file defines.h
+ * @brief Cross-platform macros for linkage, visibility, inlining, and attributes.
+ */
 
 // ─────────────────────────────────────────────
-// Compiler attribute detection and macros
+// Semantic And Visibility Macros
 // ─────────────────────────────────────────────
 
-#if defined(__clang__) || defined(__GNUC__)
-
-    #if defined(BUILD_SHARED)
-
-        // Check for __has_attribute and fallback
-        #if defined(__has_attribute)
-            #if __has_attribute(always_inline)
-                #define INLINE __attribute__((always_inline))
-            #else
-                #define INLINE inline
-            #endif
-
-            #if __has_attribute(constructor)
-                #define PRE_MAIN __attribute__((constructor))
-            #else
-                #define PRE_MAIN
-            #endif
-
-            #if __has_attribute(destructor)
-                #define POST_MAIN __attribute__((destructor))
-            #else
-                #define POST_MAIN
-            #endif
-        #else
-            // No __has_attribute support, assume GCC >= 4 or Clang
-            #define INLINE __attribute__((always_inline))
-            #define PRE_MAIN __attribute__((constructor))
-            #define POST_MAIN __attribute__((destructor))
-        #endif
-
-    #else // static build, no constructor/destructor
-
-        #define INLINE inline
-        #define PRE_MAIN
-        #define POST_MAIN
-
-    #endif // BUILD_SHARED
-
-    #define HELPER static INLINE
-
-#elif defined(_MSC_VER)
-
-    #define HELPER static __forceinline
-    #define INLINE __forceinline
-    #define PRE_MAIN    // No constructor support on MSVC
-    #define POST_MAIN   // No destructor support on MSVC
-
+/**
+ * @def PRIVATE
+ * @brief Marks a symbol as internal to the translation unit (and hidden, if supported).
+ */
+#if defined(__GNUC__) || defined(__clang__)
+    #define PRIVATE static __attribute__((visibility("hidden")))
 #else
+    #define PRIVATE static
+#endif
 
-    #pragma message("Warning: Compiler not fully supported — constructor/destructor and inlining macros may not work as expected.")
-    #define HELPER static inline
-    #define INLINE inline
+/**
+ * @def INTERNAL
+ * @brief Alias for `static`. Indicates internal linkage.
+ */
+#define INTERNAL static
+
+/**
+ * @def EXTERNAL
+ * @brief Declares an external symbol (global variable or function).
+ */
+#define EXTERNAL extern
+
+/**
+ * @def PUBLIC
+ * @brief Optional semantic marker for public-facing functions or variables.
+ */
+#define PUBLIC
+
+// ─────────────────────────────────────────────
+// Inlining And Optimization Macros
+// ─────────────────────────────────────────────
+
+/**
+ * @def INLINE
+ * @brief Suggests that a function should be inlined.
+ */
+#define INLINE inline
+
+/**
+ * @def FORCE_INLINE
+ * @brief Forces the compiler to inline the function if possible.
+ */
+#if defined(__GNUC__) || defined(__clang__)
+    #define FORCE_INLINE __attribute__((always_inline)) inline
+#elif defined(_MSC_VER)
+    #define FORCE_INLINE __forceinline
+#else
+    #define FORCE_INLINE inline
+#endif
+
+/**
+ * @def HELPER
+ * @brief Marks a static inline helper function.
+ */
+#define HELPER static INLINE
+
+/**
+ * @def PRE_MAIN
+ * @brief Executes a function before `main()` (if supported).
+ */
+#if defined(__GNUC__) || defined(__clang__)
+    #define PRE_MAIN __attribute__((constructor))
+#else
     #define PRE_MAIN
-    #define POST_MAIN
+#endif
 
+/**
+ * @def POST_MAIN
+ * @brief Executes a function after `main()` returns (if supported).
+ */
+#if defined(__GNUC__) || defined(__clang__)
+    #define POST_MAIN __attribute__((destructor))
+#else
+    #define POST_MAIN
 #endif
 
 // ─────────────────────────────────────────────
-// Platform detection for export
+// Export / Visibility Macros For Shared Libraries
 // ─────────────────────────────────────────────
 
+/**
+ * @def API_EXPORT
+ * @brief Exports a symbol from a shared library.
+ */
 #if defined(_WIN32) || defined(_WIN64)
     #define API_EXPORT __declspec(dllexport)
 #else
@@ -85,14 +104,60 @@
     #endif
 #endif
 
-// ─────────────────────────────────────────────
-// API export macro
-// ─────────────────────────────────────────────
-
+/**
+ * @def TGAPI
+ * @brief Public API export macro. Defined only when EXPORT_ENABLED and BUILD_SHARED are set.
+ */
 #if defined(EXPORT_ENABLED) && defined(BUILD_SHARED)
     #define TGAPI API_EXPORT
 #else
     #define TGAPI
+#endif
+
+// ─────────────────────────────────────────────
+// Utility Attribute Macros
+// ─────────────────────────────────────────────
+
+/**
+ * @def UNUSED(x)
+ * @brief Silences warnings for unused variables.
+ */
+#define UNUSED(x) ((void)(x))
+
+/**
+ * @def DEPRECATED
+ * @brief Marks a symbol as deprecated.
+ */
+#if defined(__GNUC__) || defined(__clang__)
+    #define DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+    #define DEPRECATED __declspec(deprecated)
+#else
+    #define DEPRECATED
+#endif
+
+/**
+ * @def ALIGN(N)
+ * @brief Aligns a variable or struct to N-byte boundary.
+ */
+#if defined(__GNUC__) || defined(__clang__)
+    #define ALIGN(N) __attribute__((aligned(N)))
+#elif defined(_MSC_VER)
+    #define ALIGN(N) __declspec(align(N))
+#else
+    #define ALIGN(N)
+#endif
+
+/**
+ * @def PACKED
+ * @brief Removes padding from a struct.
+ */
+#if defined(__GNUC__) || defined(__clang__)
+    #define PACKED __attribute__((packed))
+#elif defined(_MSC_VER)
+    #define PACKED
+#else
+    #define PACKED
 #endif
 
 #endif // DEFINES_H
