@@ -11,7 +11,6 @@ typedef struct Vec2 {
     float y;    /**< Y Component */
 } Vec2;
 
-
 /**
  * @returns 2 Dimensional vector with both components set to zero
  */

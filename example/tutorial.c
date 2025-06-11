@@ -28,7 +28,6 @@ NO_EXPORT uint32_t indices[3] = {
     0, 1, 2
 };
 
-NO_EXPORT size_t vertexCount = 6;
 NO_EXPORT size_t indexCount = 3;
 
 // This function is a callback to handle window resizing
