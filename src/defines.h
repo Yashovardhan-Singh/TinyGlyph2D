@@ -49,6 +49,12 @@
 #define INLINE inline
 
 /**
+ * @def STATIC_INLINE
+ * @brief Suggests that a function should be inlined, and is static
+ */
+#define STATIC_INLINE static inline
+
+/**
  * @def FORCE_INLINE
  * @brief Forces the compiler to inline the function if possible.
  */
@@ -57,7 +63,7 @@
 #elif defined(_MSC_VER)
     #define FORCE_INLINE __forceinline
 #else
-    #define FORCE_INLINE inline
+    #define FORCE_INLINE STATIC_INLINE
 #endif
 
 /**
@@ -159,5 +165,79 @@
 #else
     #define PACKED
 #endif
+
+// ─────────────────────────────────────────────
+// General Purpose Macros
+// ─────────────────────────────────────────────
+
+/**
+ * @def ARRAY_SIZE
+ * @brief Get number of elements in an array
+ * @param item: The pointer variable you use to access the iterator, must be same type as that of iter
+ */
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+
+/**
+ * @def FOR_EACH
+ * @brief UNSAFE. DO NOT USE. Use a pointer to iterate
+ * in case of usage, apply bounds checking
+ * @param item: The pointer variable you use to access the iterator, must be same type as that of iter
+ * @param iter: The pointer to the iterator
+ */
+#define FOR_EACH(item, iter) for (item=arr; *item; item++)
+
+// Include stdlib for malloc, calloc, realloc, free
+#include <stdlib.h>
+
+#ifndef TG_MALLOC
+    #define TG_MALLOC(size)         malloc(size)
+#endif
+
+#ifndef TG_CALLOC
+    #define TG_CALLOC(num, size)    calloc(num, size)
+#endif
+
+#ifndef TG_REALLOC
+    #define TG_REALLOC(ptr, size)   realloc(ptr, size)
+#endif
+
+#ifndef TG_FREE
+    #define TG_FREE(ptr)            free(ptr)
+#endif
+
+/**
+ * @def ALLOC_S
+ * @brief Allocate, and return pointer to the mem for a Struct (applicable to primitives)
+ * @param type: Struct or primitive
+ */
+#define ALLOC_S(type) ((type*) TG_MALLOC(sizeof(type)))
+
+// Danger ahead
+
+/**
+* @def FIELD_OFFSET
+* @brief Get the offset of a field in a struct
+* @param struct_type: Struct to calculate offset off
+* @param field: symbol for field, as declared in struct declaration
+* @note Assumes standard layout, voided if weird packing or compiler tricks
+* Falls back to offsetof defined in stddef.h in non gcc/clang compilers
+*/
+#if defined(__GNUC__) || defined(__clang__)
+    #define FIELD_OFFSET(struct_type, field) ((long)(&((struct_type *)NULL)->field))
+#else
+    #include <stddef.h>
+    #define FIELD_OFFSET(struct_type, field) offsetof(struct_type, field)
+#endif
+
+/**
+ * @def FIELD_POINTER
+ * @brief Get the pointer to a field in a struct
+ * @param struct_type: Struct to calculate offset off
+ * @param struct_pointer: Pointer to the struct of struct_type
+ * @param field: symbol for field, as declared in struct declaration
+ * @note Assumes standard layout, voided if weird packing or compiler tricks
+ */
+#define FIELD_POINTER(struct_type, struct_pointer, field) \
+    ((void *)(((char *)struct_pointer) + FIELD_OFFSET(struct_type, field)))
 
 #endif // DEFINES_H
